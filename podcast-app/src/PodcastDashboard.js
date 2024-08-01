@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 import './PodcastDashboard.css';
 
 const SHOWS_API = 'https://podcast-api.netlify.app/shows';
@@ -16,6 +18,25 @@ const genres = {
   9: 'Kids and Family'
 };
 
+const responsive = {
+  superLargeDesktop: {
+    breakpoint: { max: 4000, min: 3000 },
+    items: 5
+  },
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 3
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 2
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1
+  }
+};
+
 const PodcastDashboard = () => {
   const [shows, setShows] = useState([]);
   const [filteredShows, setFilteredShows] = useState([]);
@@ -29,6 +50,7 @@ const PodcastDashboard = () => {
 
   useEffect(() => {
     fetchShows();
+    loadFavorites();
   }, []);
 
   useEffect(() => {
@@ -89,64 +111,62 @@ const PodcastDashboard = () => {
     setFilteredShows(filtered);
   };
 
-  const toggleFavorite = (show) => {
-    if (favorites.includes(show.id)) {
-      setFavorites(favorites.filter((id) => id !== show.id));
-    } else {
-      setFavorites([...favorites, show.id]);
-    }
+  const handleFavoriteToggle = (show) => {
+    const updatedFavorites = favorites.includes(show.id)
+      ? favorites.filter(id => id !== show.id)
+      : [...favorites, show.id];
+
+    setFavorites(updatedFavorites);
+    localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
   };
 
-  const renderShowList = () => (
-    <div>
-      <div className="carousel-container">
-        {filteredShows.length > 0 && (
-          <div className="carousel">
-            {filteredShows.slice(0, 5).map((show) => (
-              <div key={show.id} className="carousel-item">
-                <img src={show.image} alt={show.title} />
-                <p>{show.title}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      <div className="controls">
-        <input
-          type="text"
-          placeholder="Search shows..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
-        />
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="sort-select">
-          <option value="">Sort By</option>
-          <option value="title-asc">Title (A-Z)</option>
-          <option value="title-desc">Title (Z-A)</option>
-          <option value="date-asc">Date (Ascending)</option>
-          <option value="date-desc">Date (Descending)</option>
-        </select>
-      </div>
-      <div className="show-list">
-        {filteredShows.map((show) => (
-          <div key={show.id} className="show-card">
-            <img src={show.image} alt={show.title} className="show-image" />
-            <h3>{show.title}</h3>
-            <p>{new Date(show.updated).toLocaleDateString()}</p>
-            <p>{show.genres.map((genreId) => genres[genreId]).join(', ')}</p>
-            <button className="view-details-button" onClick={() => fetchShowDetails(show.id)}>
-              View Details
-            </button>
-            <button
-              className="favorite-button"
-              onClick={() => toggleFavorite(show)}
-              style={{ backgroundColor: favorites.includes(show.id) ? '#ff6347' : '#ff4500' }}
-            >
-              {favorites.includes(show.id) ? 'Remove Favorite' : 'Add to Favorites'}
-            </button>
+  const loadFavorites = () => {
+    const savedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    setFavorites(savedFavorites);
+  };
+
+  const renderCarousel = () => (
+    <div className="carousel-container">
+      <Carousel
+        responsive={responsive}
+        infinite={true}
+        autoPlay={true}
+        autoPlaySpeed={3000}
+        keyBoardControl={true}
+        showDots={true}
+      >
+        {filteredShows.slice(0, 5).map((show) => (
+          <div key={show.id} className="carousel-item">
+            <img src={show.image} alt={show.title} />
+            <p>{show.title}</p>
           </div>
         ))}
-      </div>
+      </Carousel>
+    </div>
+  );
+
+  const renderShowList = () => (
+    <div className="show-list">
+      {filteredShows.map((show) => (
+        <div key={show.id} className="show-card">
+          <img src={show.image} alt={show.title} className="show-image" />
+          <h3>{show.title}</h3>
+          <p>{new Date(show.updated).toLocaleDateString()}</p>
+          <p>{show.genres.map((genreId) => genres[genreId]).join(', ')}</p>
+          <button
+            className="view-details-button"
+            onClick={() => fetchShowDetails(show.id)}
+          >
+            View Details
+          </button>
+          <button
+            className={`favorite-button ${favorites.includes(show.id) ? 'active' : ''}`}
+            onClick={() => handleFavoriteToggle(show)}
+          >
+            {favorites.includes(show.id) ? 'Unfavorite' : 'Favorite'}
+          </button>
+        </div>
+      ))}
     </div>
   );
 
@@ -155,6 +175,7 @@ const PodcastDashboard = () => {
       <button className="back-button" onClick={() => setSelectedShow(null)}>Back</button>
       <h2>{selectedShow.title}</h2>
       <img src={selectedShow.image} alt={selectedShow.title} className="show-detail-image" />
+      {renderCarousel()}
       {selectedShow.seasons.map((season) => (
         <div key={season.id} className="season-card">
           <h3>{season.title}</h3>
@@ -182,10 +203,32 @@ const PodcastDashboard = () => {
   return (
     <div className="podcast-dashboard">
       <h1>The Audio Horizon</h1>
-      {loading && <p>Loading...</p>}
-      {!loading && (
+      {selectedShow ? (
         <>
-          {selectedShow ? renderShowDetails() : renderShowList()}
+          {renderShowDetails()}
+          {renderAudioPlayer()}
+        </>
+      ) : (
+        <>
+          <div className="controls">
+            <input
+              type="text"
+              placeholder="Search shows..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="sort-select">
+              <option value="">Sort By</option>
+              <option value="title-asc">Title (A-Z)</option>
+              <option value="title-desc">Title (Z-A)</option>
+              <option value="date-asc">Date (Ascending)</option>
+              <option value="date-desc">Date (Descending)</option>
+            </select>
+          </div>
+          {loading && <p>Loading...</p>}
+          {!loading && renderShowList()}
+          {renderCarousel()}
           {renderAudioPlayer()}
         </>
       )}
@@ -194,6 +237,7 @@ const PodcastDashboard = () => {
 };
 
 export default PodcastDashboard;
+
 
 
 

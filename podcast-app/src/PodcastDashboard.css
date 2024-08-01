@@ -1,13 +1,23 @@
+/* src/PodcastDashboard.css */
+
 .podcast-dashboard {
-  font-family: Arial, sans-serif;
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
-h1 {
+.carousel-container {
+  padding: 20px;
+}
+
+.carousel-item {
+  padding: 10px;
+  background: #ddd;
+  border-radius: 5px;
   text-align: center;
-  color: #333;
+}
+
+.carousel-item img {
+  width: 100%;
+  border-radius: 5px;
 }
 
 .controls {
@@ -17,42 +27,15 @@ h1 {
 }
 
 .search-input {
-  padding: 8px;
+  width: 70%;
+  padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  flex: 1;
 }
 
 .sort-select {
-  padding: 8px;
+  width: 25%;
+  padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-left: 20px;
-}
-
-.carousel-container {
-  margin-bottom: 20px;
-}
-
-.carousel {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  padding: 10px 0;
-}
-
-.carousel-item {
-  flex: 0 0 auto;
-  width: 150px;
-  text-align: center;
-  scroll-snap-align: start;
-}
-
-.carousel-item img {
-  width: 100%;
-  border-radius: 8px;
 }
 
 .show-list {
@@ -62,127 +45,66 @@ h1 {
 }
 
 .show-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  width: calc(33% - 20px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out;
-}
-
-.show-card:hover {
-  transform: scale(1.02);
+  width: 200px;
+  background: #f5f5f5;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .show-image {
   width: 100%;
-  height: auto;
+  border-radius: 10px;
 }
 
-.show-card h3 {
-  margin: 10px;
-  font-size: 18px;
-  color: #333;
-}
-
-.show-card p {
-  margin: 0 10px;
-  font-size: 14px;
-  color: #666;
+.view-details-button,
+.favorite-button {
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .view-details-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.view-details-button:hover {
-  background-color: #0056b3;
+  background-color: #007bff; /* Blue color */
 }
 
 .favorite-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background-color: #ff4500;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  background-color: #28a745; /* Green color */
 }
 
-.favorite-button:hover {
-  background-color: #ff6347;
+.favorite-button.active {
+  background-color: #dc3545; /* Red color when active */
 }
 
 .show-details {
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .show-detail-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
+  width: 50%;
+  border-radius: 10px;
 }
 
 .season-card {
-  margin-bottom: 20px;
-}
-
-.season-card h3 {
-  font-size: 18px;
-  color: #333;
-}
-
-.season-card ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.season-card li {
-  padding: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.season-card li:hover {
-  background-color: #f0f0f0;
-}
-
-.audio-player {
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
 }
 
-.audio-player h4 {
-  margin: 0;
-  font-size: 18px;
-  color: #333;
+.audio-player {
+  margin-top: 20px;
 }
 
-.audio-player p {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #666;
+.back-button {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff; /* Blue color */
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
 }
-
-.loading {
-  text-align: center;
-  font-size: 18px;
-  color: #333;
-}
-
